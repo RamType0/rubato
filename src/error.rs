@@ -86,11 +86,21 @@ pub enum ResampleError {
     BadRatioUpdate,
     /// Error raised when trying to adjust a synchronous resampler.
     SyncNotAdjustable,
-    /// Error raised when the number of channels doesn't match expected.
+    /// Error raised when the number of input channels doesn't match expected.
     WrongNumberOfChannels { expected: usize, actual: usize },
-    /// Error raised when the number of frames in a single channel doesn't match
+    /// Error raised when the number of frames in a single input channel doesn't match
     /// the expected.
     WrongNumberOfFrames {
+        channel: usize,
+        expected: usize,
+        actual: usize,
+    },
+
+    /// Error raised when the number of output channels doesn't match expected.
+    WrongNumberOfOutputChannels { expected: usize, actual: usize },
+    /// Error raised when the number of frames in a single output channel doesn't match
+    /// the expected.
+    WrongNumberOfOutputFrames {
         channel: usize,
         expected: usize,
         actual: usize,
@@ -121,6 +131,24 @@ impl fmt::Display for ResampleError {
                 write!(
                     f,
                     "Wrong number of frames {} in input channel {}, expected {}",
+                    actual, channel, expected
+                )
+            }
+            Self::WrongNumberOfOutputChannels { expected, actual } => {
+                write!(
+                    f,
+                    "Wrong number of channels {} in output, expected {}",
+                    actual, expected
+                )
+            }
+            Self::WrongNumberOfOutputFrames {
+                channel,
+                expected,
+                actual,
+            } => {
+                write!(
+                    f,
+                    "Wrong number of frames {} in output channel {}, expected {}",
                     actual, channel, expected
                 )
             }

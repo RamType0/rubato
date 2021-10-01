@@ -212,6 +212,13 @@ pub trait Resampler<T> {
     fn set_resample_ratio_relative(&mut self, rel_ratio: f64) -> ResampleResult<()>;
 }
 
+pub trait ResamplerFixedOut<T> : Resampler<T>
+{
+    fn process<V: AsRef<[T]>,W: AsMut<[T]>>(&mut self, wave_in: &[V], wave_out: &mut [W]) -> Option<ResampleError>;
+
+    fn nbr_frames_out(&self) -> usize;
+}
+
 /// This is a helper trait that can be used when a [Resampler] must be object safe.
 ///
 /// It differs from [Resampler] only by fixing the type of the input of `process()` to `&[Vec<T>]`.
